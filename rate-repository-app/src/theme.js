@@ -6,9 +6,9 @@ const theme = {
     appBarBg: '#21fa90',
   },
   fontSizes: {
-    body: 14,
-    subheading: 16,
-    heading: 20,
+    body: 16,
+    subheading: 20,
+    heading: 28,
   },
   fonts: {
     main: 'System',
