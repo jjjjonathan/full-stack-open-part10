@@ -35,6 +35,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   numberContainer: {
+    display: 'flex',
+    flexDirection: 'row',
     marginTop: 15,
   },
 });
@@ -62,7 +64,7 @@ const RepositoryItem = ({ item }) => {
           <Text style={styles.languageBadge}>{item.language}</Text>
         </View>
       </View>
-      <View style={{ ...styles.flexContainer, ...styles.numberContainer }}>
+      <View style={styles.numberContainer}>
         <RepositoryItemNumber
           number={formatNumber(item.stargazersCount)}
           label="Stars"
