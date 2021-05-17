@@ -8,7 +8,11 @@ import Text from './Text';
 import { styles as textInputStyles } from './TextInput';
 import theme from '../theme';
 
+import useSignIn from '../hooks/useSignIn';
+
 const SignIn = () => {
+  const [signIn] = useSignIn();
+
   const styles = StyleSheet.create({
     button: {
       ...textInputStyles.textInput,
@@ -27,8 +31,13 @@ const SignIn = () => {
     password: yup.string().required('Password is required'),
   });
 
-  const onSubmit = (values) => {
-    console.log('logging in with ', values);
+  const onSubmit = async ({ username, password }) => {
+    try {
+      const { data } = await signIn({ username, password });
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
