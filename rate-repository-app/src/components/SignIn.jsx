@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { useHistory } from 'react-router-native';
 import { Formik } from 'formik';
 import FormikTextInput from './FormikTextInput';
 import * as yup from 'yup';
@@ -12,6 +13,7 @@ import useSignIn from '../hooks/useSignIn';
 
 const SignIn = () => {
   const [signIn] = useSignIn();
+  const history = useHistory();
 
   const styles = StyleSheet.create({
     button: {
@@ -35,6 +37,7 @@ const SignIn = () => {
     try {
       const { data } = await signIn({ username, password });
       console.log(data);
+      history.push('/');
     } catch (e) {
       console.log(e);
     }
