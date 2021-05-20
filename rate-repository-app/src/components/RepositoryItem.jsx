@@ -57,24 +57,38 @@ const RepositoryItem = ({ item }) => {
           <Image style={styles.avatar} source={{ uri: item.ownerAvatarUrl }} />
         </View>
         <View style={styles.mainText}>
-          <Text fontSize="subheading" fontWeight="bold">
+          <Text fontSize="subheading" fontWeight="bold" testID="name">
             {item.fullName}
           </Text>
-          <Text color="textSecondary">{item.description}</Text>
-          <Text style={styles.languageBadge}>{item.language}</Text>
+          <Text color="textSecondary" testID="description">
+            {item.description}
+          </Text>
+          <Text style={styles.languageBadge} testID="language">
+            {item.language}
+          </Text>
         </View>
       </View>
       <View style={styles.numberContainer}>
         <RepositoryItemNumber
           number={formatNumber(item.stargazersCount)}
           label="Stars"
+          testID="stars"
         />
         <RepositoryItemNumber
           number={formatNumber(item.forksCount)}
           label="Forks"
+          testID="forks"
         />
-        <RepositoryItemNumber number={item.reviewCount} label="Reviews" />
-        <RepositoryItemNumber number={item.ratingAverage} label="Rating" />
+        <RepositoryItemNumber
+          number={item.reviewCount}
+          label="Reviews"
+          testID="review"
+        />
+        <RepositoryItemNumber
+          number={item.ratingAverage}
+          label="Rating"
+          testID="rating"
+        />
       </View>
     </View>
   );
