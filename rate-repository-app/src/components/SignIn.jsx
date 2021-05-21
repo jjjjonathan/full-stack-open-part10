@@ -11,10 +11,7 @@ import theme from '../theme';
 
 import useSignIn from '../hooks/useSignIn';
 
-const SignIn = () => {
-  const [signIn] = useSignIn();
-  const history = useHistory();
-
+export const SignInContainer = ({ onSubmit }) => {
   const styles = StyleSheet.create({
     button: {
       ...textInputStyles.textInput,
@@ -32,6 +29,45 @@ const SignIn = () => {
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required'),
   });
+  return (
+    <View>
+      <Formik
+        initialValues={{ username: '', password: '' }}
+        onSubmit={onSubmit}
+        validationSchema={validationSchema}
+      >
+        {({ handleSubmit }) => (
+          <View>
+            <FormikTextInput
+              name="username"
+              placeholder="Username"
+              testID="username"
+            />
+            <FormikTextInput
+              name="password"
+              placeholder="Password"
+              testID="password"
+              secureTextEntry
+            />
+            <Pressable
+              onPress={handleSubmit}
+              style={styles.button}
+              testID="submit"
+            >
+              <Text style={styles.buttonText} fontWeight="bold">
+                Sign In
+              </Text>
+            </Pressable>
+          </View>
+        )}
+      </Formik>
+    </View>
+  );
+};
+
+const SignIn = () => {
+  const [signIn] = useSignIn();
+  const history = useHistory();
 
   const onSubmit = async ({ username, password }) => {
     try {
@@ -43,31 +79,7 @@ const SignIn = () => {
     }
   };
 
-  return (
-    <View>
-      <Formik
-        initialValues={{ username: '', password: '' }}
-        onSubmit={onSubmit}
-        validationSchema={validationSchema}
-      >
-        {({ handleSubmit }) => (
-          <View>
-            <FormikTextInput name="username" placeholder="Username" />
-            <FormikTextInput
-              name="password"
-              placeholder="Password"
-              secureTextEntry
-            />
-            <Pressable onPress={handleSubmit} style={styles.button}>
-              <Text style={styles.buttonText} fontWeight="bold">
-                Sign In
-              </Text>
-            </Pressable>
-          </View>
-        )}
-      </Formik>
-    </View>
-  );
+  return <SignInContainer onSubmit={onSubmit} />;
 };
 
 export default SignIn;
