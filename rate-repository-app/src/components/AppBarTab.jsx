@@ -7,7 +7,7 @@ const AppBarTab = ({ text, link, onPress }) => {
   if (onPress) {
     return (
       <Pressable onPress={onPress}>
-        <Text fontSize="heading" fontWeight="bold" style={{ padding: 20 }}>
+        <Text fontSize="subheading" fontWeight="bold" style={{ padding: 20 }}>
           {text}
         </Text>
       </Pressable>
@@ -15,7 +15,7 @@ const AppBarTab = ({ text, link, onPress }) => {
   }
   return (
     <Link to={link}>
-      <Text fontSize="heading" fontWeight="bold" style={{ padding: 20 }}>
+      <Text fontSize="subheading" fontWeight="bold" style={{ padding: 20 }}>
         {text}
       </Text>
     </Link>

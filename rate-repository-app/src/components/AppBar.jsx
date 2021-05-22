@@ -22,12 +22,19 @@ const AppBar = () => {
   const authStorage = useAuthStorage();
   const client = useApolloClient();
   const { data } = useQuery(GET_AUTHORIZED_USER);
-  console.log('Authorized?', data);
 
   const handleSignOut = async () => {
     console.log('signing out!');
     await authStorage.removeAccessToken();
     client.resetStore();
+  };
+
+  const reviewTab = () => {
+    if (!data || !data.authorizedUser) {
+      return null;
+    } else {
+      return <AppBarTab text="Create a review" link="/createreview" />;
+    }
   };
 
   const signTab = () => {
@@ -42,6 +49,7 @@ const AppBar = () => {
     <View style={styles.container}>
       <ScrollView horizontal>
         <AppBarTab text="Repositories" link="/" />
+        {reviewTab()}
         {signTab()}
       </ScrollView>
     </View>
