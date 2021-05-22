@@ -1,27 +1,18 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, FlatList, View, StyleSheet } from 'react-native';
 import { useParams } from 'react-router-native';
 import useRepositories from '../hooks/useRepositories';
 import useRepositoryUrl from '../hooks/useRepositoryUrl';
+import useReviews from '../hooks/useReviews';
 import RepositoryItem from './RepositoryItem';
 import { styles as buttonStyles } from './SignIn';
 import * as Linking from 'expo-linking';
+import theme from '../theme';
+import Text from './Text';
+import { format } from 'date-fns';
 
-const RepositoryDetails = () => {
-  const { id } = useParams();
-  const { data, loading } = useRepositories();
-  console.log('ID IS:', id);
-  const { data: repositoryUrlData, loading: loading2 } = useRepositoryUrl(id);
-  console.log('REPO URL DATA OBJ is', repositoryUrlData);
-
-  const repositoryNodes = data
-    ? data.repositories.edges.map((edge) => edge.node)
-    : [];
-
-  const repository = repositoryNodes.find((repo) => repo.id === id);
-  console.log(repository);
-
-  if (loading || loading2) return <Text>Loading...</Text>;
+const RepositoryInfo = ({ repository }) => {
+  const { data, loading } = useRepositoryUrl(repository.id);
 
   return (
     <>
@@ -29,12 +20,86 @@ const RepositoryDetails = () => {
       <Pressable
         style={buttonStyles.button}
         onPress={() => {
-          Linking.openURL(repositoryUrlData.repository.url);
+          Linking.openURL(data.repository.url);
         }}
       >
-        <Text style={buttonStyles.buttonText}>Open in GitHub</Text>
+        {loading ? null : (
+          <Text style={buttonStyles.buttonText}>Open in GitHub</Text>
+        )}
       </Pressable>
     </>
+  );
+};
+
+const ReviewItem = ({ review }) => {
+  const styles = StyleSheet.create({
+    container: {
+      marginLeft: 20,
+      marginRight: 20,
+      marginTop: 30,
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    ratingContainer: {
+      backgroundColor: theme.colors.appBarBg,
+      borderWidth: 2,
+      height: 60,
+      width: 60,
+      borderRadius: 30,
+      flexGrow: 0,
+    },
+    ratingText: {
+      fontSize: 22,
+      marginTop: 15,
+      textAlign: 'center',
+    },
+    contentContainer: {
+      marginLeft: 20,
+    },
+  });
+  return (
+    <View style={styles.container}>
+      <View style={styles.ratingContainer}>
+        <Text style={styles.ratingText}>{review.rating}</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text fontSize="subheading" fontWeight="bold">
+          {review.user.username}
+        </Text>
+        <Text color="textSecondary">
+          {format(new Date(review.createdAt), 'M/d/y')}
+        </Text>
+        <Text>{review.text}</Text>
+      </View>
+    </View>
+  );
+};
+
+const RepositoryDetails = () => {
+  const { id } = useParams();
+  const { data: repoData, loading } = useRepositories();
+
+  const repositoryNodes = repoData
+    ? repoData.repositories.edges.map((edge) => edge.node)
+    : [];
+
+  const repository = repositoryNodes.find((repo) => repo.id === id);
+
+  const { data: reviewData } = useReviews(repository.id);
+
+  const reviews = reviewData
+    ? reviewData.repository.reviews.edges.map((edge) => edge.node)
+    : [];
+
+  if (loading) return <Text>Loading...</Text>;
+
+  return (
+    <FlatList
+      data={reviews}
+      renderItem={({ item }) => <ReviewItem review={item} />}
+      keyExtractor={({ id }) => id}
+      ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+    />
   );
 };
 
