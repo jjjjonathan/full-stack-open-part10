@@ -31,6 +31,15 @@ export const GET_REPOSITORIES = gql`
   }
 `;
 
+export const GET_REPOSITORY_URL = gql`
+  query repository($id: ID!) {
+    repository(id: $id) {
+      id
+      url
+    }
+  }
+`;
+
 export const GET_AUTHORIZED_USER = gql`
   query {
     authorizedUser {

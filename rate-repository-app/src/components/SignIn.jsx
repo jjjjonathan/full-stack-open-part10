@@ -11,20 +11,20 @@ import theme from '../theme';
 
 import useSignIn from '../hooks/useSignIn';
 
-export const SignInContainer = ({ onSubmit }) => {
-  const styles = StyleSheet.create({
-    button: {
-      ...textInputStyles.textInput,
-      backgroundColor: theme.colors.primary,
-      borderWidth: 0,
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 20,
-      textAlign: 'center',
-    },
-  });
+export const styles = StyleSheet.create({
+  button: {
+    ...textInputStyles.textInput,
+    backgroundColor: theme.colors.primary,
+    borderWidth: 0,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+});
 
+export const SignInContainer = ({ onSubmit }) => {
   const validationSchema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required'),
