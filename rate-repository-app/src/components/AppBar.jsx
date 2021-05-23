@@ -37,11 +37,19 @@ const AppBar = () => {
     }
   };
 
-  const signTab = () => {
+  const signInTab = () => {
     if (!data || !data.authorizedUser) {
       return <AppBarTab text="Sign In" link="/signin" />;
     } else {
       return <AppBarTab text="Sign Out" onPress={handleSignOut} />;
+    }
+  };
+
+  const signUpTab = () => {
+    if (!data || !data.authorizedUser) {
+      return <AppBarTab text="Sign Up" link="/signup" />;
+    } else {
+      return null;
     }
   };
 
@@ -50,7 +58,8 @@ const AppBar = () => {
       <ScrollView horizontal>
         <AppBarTab text="Repositories" link="/" />
         {reviewTab()}
-        {signTab()}
+        {signInTab()}
+        {signUpTab()}
       </ScrollView>
     </View>
   );
