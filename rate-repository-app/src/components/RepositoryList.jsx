@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FlatList, View, StyleSheet, Text, Pressable } from 'react-native';
 import RepositoryItem from './RepositoryItem';
+import TextInput from './TextInput';
 
 import { useHistory } from 'react-router-native';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { Picker } from '@react-native-picker/picker';
 import useRepositories from '../hooks/useRepositories';
@@ -14,6 +16,20 @@ const styles = StyleSheet.create({
 });
 
 const ItemSeparator = () => <View style={styles.separator} />;
+
+const Search = ({ query, setQuery, setServerQuery }) => {
+  return (
+    <TextInput
+      name="query"
+      placeholder="Filter repositories..."
+      onChangeText={(text) => {
+        setQuery(text);
+        setServerQuery(text);
+      }}
+      value={query}
+    />
+  );
+};
 
 const SortPicker = ({ selectedSortMethod, setSelectedSortMethod }) => {
   return (
@@ -34,6 +50,10 @@ export const RepositoryListContainer = ({
   repositories,
   selectedSortMethod,
   setSelectedSortMethod,
+  query,
+  setQuery,
+  setServerQuery,
+  loading,
 }) => {
   const history = useHistory();
 
@@ -46,20 +66,30 @@ export const RepositoryListContainer = ({
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={() => (
-        <SortPicker
-          selectedSortMethod={selectedSortMethod}
-          setSelectedSortMethod={setSelectedSortMethod}
-        />
+        <>
+          <Search
+            query={query}
+            setQuery={setQuery}
+            setServerQuery={setServerQuery}
+          />
+          <SortPicker
+            selectedSortMethod={selectedSortMethod}
+            setSelectedSortMethod={setSelectedSortMethod}
+          />
+        </>
       )}
-      renderItem={({ item }) => (
-        <Pressable
-          onPress={() => {
-            history.push(`/repositories/${item.id}`);
-          }}
-        >
-          <RepositoryItem item={item} />
-        </Pressable>
-      )}
+      renderItem={({ item }) => {
+        if (loading) return null;
+        return (
+          <Pressable
+            onPress={() => {
+              history.push(`/repositories/${item.id}`);
+            }}
+          >
+            <RepositoryItem item={item} />
+          </Pressable>
+        );
+      }}
     />
   );
 };
@@ -84,18 +114,29 @@ const getVariablesFromSortMethod = (sortMethod) => {
 
 const RepositoryList = () => {
   const [selectedSortMethod, setSelectedSortMethod] = useState('latest');
+  const [query, setQuery] = useState('');
+  const [serverQuery, setServerQuery] = useState('');
 
-  const { loading, data } = useRepositories(
-    getVariablesFromSortMethod(selectedSortMethod)
-  );
+  const debouncedQuery = useDebouncedCallback((value) => {
+    setServerQuery(value);
+  }, 500);
 
-  if (loading) return <Text>Loading...</Text>;
+  const { loading, data } = useRepositories({
+    ...getVariablesFromSortMethod(selectedSortMethod),
+    searchKeyword: serverQuery,
+  });
+
+  const repositories = data ? data.repositories : { edges: [] };
 
   return (
     <RepositoryListContainer
-      repositories={data.repositories}
+      repositories={repositories}
       selectedSortMethod={selectedSortMethod}
       setSelectedSortMethod={setSelectedSortMethod}
+      query={query}
+      setQuery={setQuery}
+      setServerQuery={debouncedQuery}
+      loading={loading}
     />
   );
 };
