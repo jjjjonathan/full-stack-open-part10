@@ -29,11 +29,19 @@ const AppBar = () => {
     client.resetStore();
   };
 
-  const reviewTab = () => {
+  const createReviewTab = () => {
     if (!data || !data.authorizedUser) {
       return null;
     } else {
       return <AppBarTab text="Create a review" link="/createreview" />;
+    }
+  };
+
+  const myReviewsTab = () => {
+    if (!data || !data.authorizedUser) {
+      return null;
+    } else {
+      return <AppBarTab text="My reviews" link="/myreviews" />;
     }
   };
 
@@ -57,7 +65,8 @@ const AppBar = () => {
     <View style={styles.container}>
       <ScrollView horizontal>
         <AppBarTab text="Repositories" link="/" />
-        {reviewTab()}
+        {createReviewTab()}
+        {myReviewsTab()}
         {signInTab()}
         {signUpTab()}
       </ScrollView>

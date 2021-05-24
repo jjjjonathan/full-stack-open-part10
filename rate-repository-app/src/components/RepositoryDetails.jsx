@@ -1,15 +1,14 @@
 import React from 'react';
-import { Pressable, FlatList, View, StyleSheet } from 'react-native';
+import { Pressable, FlatList } from 'react-native';
 import { useParams } from 'react-router-native';
 import useRepositories from '../hooks/useRepositories';
 import useRepositoryUrl from '../hooks/useRepositoryUrl';
 import useReviews from '../hooks/useReviews';
 import RepositoryItem from './RepositoryItem';
+import ReviewItem from './ReviewItem';
 import { styles as buttonStyles } from './SignIn';
 import * as Linking from 'expo-linking';
-import theme from '../theme';
 import Text from './Text';
-import { format } from 'date-fns';
 
 const RepositoryInfo = ({ repository }) => {
   const { data, loading } = useRepositoryUrl(repository.id);
@@ -28,50 +27,6 @@ const RepositoryInfo = ({ repository }) => {
         )}
       </Pressable>
     </>
-  );
-};
-
-const ReviewItem = ({ review }) => {
-  const styles = StyleSheet.create({
-    container: {
-      marginLeft: 20,
-      marginRight: 20,
-      marginTop: 30,
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    ratingContainer: {
-      backgroundColor: theme.colors.appBarBg,
-      borderWidth: 2,
-      height: 60,
-      width: 60,
-      borderRadius: 30,
-      flexGrow: 0,
-    },
-    ratingText: {
-      fontSize: 22,
-      marginTop: 15,
-      textAlign: 'center',
-    },
-    contentContainer: {
-      marginLeft: 20,
-    },
-  });
-  return (
-    <View style={styles.container}>
-      <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>{review.rating}</Text>
-      </View>
-      <View style={styles.contentContainer}>
-        <Text fontSize="subheading" fontWeight="bold">
-          {review.user.username}
-        </Text>
-        <Text color="textSecondary">
-          {format(new Date(review.createdAt), 'M/d/y')}
-        </Text>
-        <Text>{review.text}</Text>
-      </View>
-    </View>
   );
 };
 
