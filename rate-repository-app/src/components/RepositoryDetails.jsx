@@ -77,10 +77,10 @@ const ReviewItem = ({ review }) => {
 
 const RepositoryDetails = () => {
   const { id } = useParams();
-  const { data: repoData, loading } = useRepositories();
+  const { repositories, loading } = useRepositories();
 
-  const repositoryNodes = repoData
-    ? repoData.repositories.edges.map((edge) => edge.node)
+  const repositoryNodes = repositories
+    ? repositories.edges.map((edge) => edge.node)
     : [];
 
   const repository = repositoryNodes.find((repo) => repo.id === id);

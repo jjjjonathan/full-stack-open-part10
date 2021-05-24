@@ -93,6 +93,8 @@ export class RepositoryListContainer extends React.Component {
           if (props.loading) return null;
           return <LinkedRepositoryItem item={item} />;
         }}
+        onEndReached={props.onEndReach}
+        onEndReachedThreshold={0.5}
       />
     );
   }
@@ -125,12 +127,15 @@ const RepositoryList = () => {
     setServerQuery(value);
   }, 500);
 
-  const { loading, data } = useRepositories({
+  const { loading, repositories, fetchMore } = useRepositories({
     ...getVariablesFromSortMethod(selectedSortMethod),
     searchKeyword: serverQuery,
+    first: 8,
   });
 
-  const repositories = data ? data.repositories : { edges: [] };
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   return (
     <RepositoryListContainer
@@ -141,6 +146,7 @@ const RepositoryList = () => {
       setQuery={setQuery}
       setServerQuery={debouncedQuery}
       loading={loading}
+      onEndReach={onEndReach}
     />
   );
 };
