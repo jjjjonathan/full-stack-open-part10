@@ -85,7 +85,7 @@ const RepositoryDetails = () => {
 
   const repository = repositoryNodes.find((repo) => repo.id === id);
 
-  const { data: reviewData } = useReviews(repository.id);
+  const { data: reviewData, fetchMore } = useReviews(repository.id);
 
   const reviews = reviewData
     ? reviewData.repository.reviews.edges.map((edge) => edge.node)
@@ -93,12 +93,18 @@ const RepositoryDetails = () => {
 
   if (loading) return <Text>Loading...</Text>;
 
+  const onEndReach = () => {
+    fetchMore();
+  };
+
   return (
     <FlatList
       data={reviews}
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
       ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
     />
   );
 };
