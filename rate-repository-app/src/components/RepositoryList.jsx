@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, View, StyleSheet, Text, Pressable } from 'react-native';
+import { FlatList, View, StyleSheet, Pressable } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 import TextInput from './TextInput';
 
@@ -46,53 +46,57 @@ const SortPicker = ({ selectedSortMethod, setSelectedSortMethod }) => {
   );
 };
 
-export const RepositoryListContainer = ({
-  repositories,
-  selectedSortMethod,
-  setSelectedSortMethod,
-  query,
-  setQuery,
-  setServerQuery,
-  loading,
-}) => {
+const LinkedRepositoryItem = ({ item }) => {
   const history = useHistory();
-
-  const repositoryNodes = repositories
-    ? repositories.edges.map((edge) => edge.node)
-    : [];
-
   return (
-    <FlatList
-      data={repositoryNodes}
-      ItemSeparatorComponent={ItemSeparator}
-      ListHeaderComponent={() => (
-        <>
-          <Search
-            query={query}
-            setQuery={setQuery}
-            setServerQuery={setServerQuery}
-          />
-          <SortPicker
-            selectedSortMethod={selectedSortMethod}
-            setSelectedSortMethod={setSelectedSortMethod}
-          />
-        </>
-      )}
-      renderItem={({ item }) => {
-        if (loading) return null;
-        return (
-          <Pressable
-            onPress={() => {
-              history.push(`/repositories/${item.id}`);
-            }}
-          >
-            <RepositoryItem item={item} />
-          </Pressable>
-        );
+    <Pressable
+      onPress={() => {
+        history.push(`/repositories/${item.id}`);
       }}
-    />
+    >
+      <RepositoryItem item={item} />
+    </Pressable>
   );
 };
+
+export class RepositoryListContainer extends React.Component {
+  renderHeader = () => {
+    const props = this.props;
+    return (
+      <>
+        <Search
+          query={props.query}
+          setQuery={props.setQuery}
+          setServerQuery={props.setServerQuery}
+        />
+        <SortPicker
+          selectedSortMethod={props.selectedSortMethod}
+          setSelectedSortMethod={props.setSelectedSortMethod}
+        />
+      </>
+    );
+  };
+
+  render() {
+    const props = this.props;
+
+    const repositoryNodes = props.repositories
+      ? props.repositories.edges.map((edge) => edge.node)
+      : [];
+
+    return (
+      <FlatList
+        data={repositoryNodes}
+        ItemSeparatorComponent={ItemSeparator}
+        ListHeaderComponent={this.renderHeader}
+        renderItem={({ item }) => {
+          if (props.loading) return null;
+          return <LinkedRepositoryItem item={item} />;
+        }}
+      />
+    );
+  }
+}
 
 const getVariablesFromSortMethod = (sortMethod) => {
   if (sortMethod === 'highest') {
